@@ -18,10 +18,11 @@ export const styles = StyleSheet.create({
     marginBottom: 10,
   },
   containerScroll: {marginTop: 20},
-  ratesTitle: {fontSize: 24, fontWeight: '600', marginBottom: 10},
+  ratesTitle: {fontSize: 26, fontWeight: '600', marginBottom: 10},
   rateContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: 5,
   },
-  rateTitle: {fontSize: 18, fontWeight: '500'},
+  rateTitle: {fontSize: 24},
 });

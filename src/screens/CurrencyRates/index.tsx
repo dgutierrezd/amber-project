@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {Pressable, SafeAreaView, ScrollView, Text, View} from 'react-native';
+import {
+  NativeModules,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  View,
+} from 'react-native';
 import {StateTypes} from '../../interfaces';
 import {useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -9,6 +16,10 @@ import symbols from '../../utils/currency-symbols.json';
 import RatesSkeleton from '../../components/Skeleton/RatesSkeleton';
 import {useNavigation} from '@react-navigation/native';
 import {styles} from './styles';
+import {onImpactLight} from '../../utils/haptics';
+import Toast from 'react-native-toast-message';
+
+const {CalendarManager} = NativeModules;
 
 const CurrencyRates = ({route}) => {
   const [ratesValue, setRatesValue] = useState<string[]>([]);
@@ -45,6 +56,29 @@ const CurrencyRates = ({route}) => {
     navigation.goBack();
   };
 
+  const downloadRate = rateCompare => {
+    onImpactLight();
+    const currencyTitleSpot = `${rateCompare.name}-${selectedCurrency?.currency}: ${rateCompare.rate}`;
+    CalendarManager.addEvent(currencyTitleSpot)
+      .then(() => {
+        Toast.show({
+          type: 'success',
+          props: {
+            text1: `Currency spot ${currencyTitleSpot} saved successfully from today`,
+          },
+        });
+      })
+      .catch(err => {
+        Toast.show({
+          type: 'error',
+          props: {
+            text1:
+              'It wasn`t possible to save the currency spot on the calendar.',
+          },
+        });
+      });
+  };
+
   return (
     <SafeAreaView style={styles.containerSafeArea}>
       <View style={styles.container}>
@@ -70,9 +104,24 @@ const CurrencyRates = ({route}) => {
               {ratesValue?.map((value, index) => (
                 <View key={index} style={styles.rateContainer}>
                   <Text style={styles.rateTitle}>{ratesKey[index]}</Text>
-                  <Text style={{fontSize: 18}}>
-                    {he.decode(symbol)} {Number(value)?.toFixed(2)}
-                  </Text>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Text style={{fontSize: 20, marginRight: 3}}>
+                      {he.decode(symbol)}
+                      {Number(value)?.toFixed(2)}
+                    </Text>
+                    <Pressable
+                      style={{padding: 3}}
+                      onPress={() =>
+                        downloadRate({
+                          name: ratesKey[index],
+                          rate: `${he.decode(symbol)}${Number(value)?.toFixed(
+                            2,
+                          )}`,
+                        })
+                      }>
+                      <Icon name="download-outline" size={28} />
+                    </Pressable>
+                  </View>
                 </View>
               ))}
             </ScrollView>

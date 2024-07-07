@@ -1,6 +1,5 @@
 import React from 'react';
-import {SafeAreaView} from 'react-native';
-import Toast, {BaseToast, ErrorToast} from 'react-native-toast-message';
+import {ErrorToast, SuccessToast} from 'react-native-toast-message';
 
 interface CustomSnackbarProps {
   /** Label of the snackbar */
@@ -15,13 +14,12 @@ interface ToastVariantsProps {
 
 export const toastConfig = {
   success: ({props}: ToastVariantsProps) => (
-    <BaseToast
+    <SuccessToast
       {...props}
-      contentContainerStyle={{paddingHorizontal: 15}}
       text1Style={{
-        fontSize: 15,
-        fontWeight: '400',
+        fontSize: 17,
       }}
+      text1NumberOfLines={3}
     />
   ),
   error: ({props}: ToastVariantsProps) => (
@@ -30,6 +28,7 @@ export const toastConfig = {
       text1Style={{
         fontSize: 17,
       }}
+      text1NumberOfLines={3}
       text2Style={{
         fontSize: 15,
       }}
