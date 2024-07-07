@@ -1,4 +1,5 @@
 React Native project created for Amber to test skills.
+** Don't forget to test both branches (master, improvements)
 
 # Getting Started
 
